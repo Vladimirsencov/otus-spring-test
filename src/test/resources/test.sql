@@ -1,0 +1,10 @@
+delete from authors;
+delete from genres;
+delete from books_authors;
+delete from books_authors;
+delete from books;
+insert into books (id, name, description, pub_year) values (1, 'Test_book', null, 2018);
+insert into authors(id, name) values(1, 'Ivan Petrov');
+insert into genres (id, name) values(1, 'Fantastic');
+insert into books_authors ( book_id, author_id) values (1, 1);
+insert into books_genres(book_id, genre_id) values (1, 1);

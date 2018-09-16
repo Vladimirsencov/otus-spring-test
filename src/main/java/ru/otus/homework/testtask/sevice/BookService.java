@@ -48,7 +48,7 @@ public class BookService {
     }
 
     public List<Book> getAllBooks() {
-        return bookRepository.getAllWithAuthorsAndGenres();
+        return bookRepository.findAll();
     }
 
     public void removeBook(long bookId) {

@@ -1,69 +1,87 @@
 package ru.otus.homework.testtask;
 
-import org.junit.Assert;
-
-import org.junit.Before;
 import org.junit.Test;
-
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.otus.homework.testtask.model.Author;
 import ru.otus.homework.testtask.model.Book;
-import ru.otus.homework.testtask.model.Genre;
+import ru.otus.homework.testtask.repository.AuthorRepository;
 import ru.otus.homework.testtask.repository.BookRepository;
+import ru.otus.homework.testtask.repository.GenreRepository;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Collections;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
+@Sql(scripts = "/test.sql")
 public class TestApplicationTests {
     @Autowired
-	BookRepository bookRepository;
+    BookRepository bookRepository;
+    @Autowired
+    GenreRepository genreRepository;
+    @Autowired
+    AuthorRepository authorRepository;
 
+    Long bookId = 1L;
 
-    Long bookId;
-
-
-    @Before
-	public  void before(){
-		Book book = new Book();
-		book.setName("Test_book");
-		book.setPubYear(2018);
-		Author author = new Author();
-		author.setName("Ivan Petrov");
-		Genre genre = new Genre();
-		genre.setName("Fantastic");
-		book.setAuthors(Collections.singleton(author));
-		book.setGenres(Collections.singleton(genre));
-
-		bookId = bookRepository.save(book).getId();
-	}
-
-	@Test
+    @Test
     @Transactional
-	public void findBookTest(){
-		Book book = bookRepository.findById(bookId).orElse(null);
-		Assert.assertNotNull("book present", book);
-		Assert.assertEquals("Ivan Petrov", new ArrayList<>(book.getAuthors()).get(0).getName());
-		Assert.assertEquals("Fantastic", new ArrayList<>(book.getGenres()).get(0).getName());
-	}
+    public void findBookTest() {
+        Book book = bookRepository.findById(bookId).orElse(null);
+        assertNotNull("book present", book);
+        assertEquals("Ivan Petrov", new ArrayList<>(book.getAuthors()).get(0).getName());
+        assertEquals("Fantastic", new ArrayList<>(book.getGenres()).get(0).getName());
+    }
 
-	@Test
-	@Transactional
-	public void existBookTest(){
-		Assert.assertTrue(bookRepository.existsBookById(bookId));
-	}
+    @Test
+    @Transactional
+    public void findAllBooksGraphMethod() {
 
-	@Test
-	@Transactional
-	public void removeBookTest(){
-		Assert.assertTrue(bookRepository.existsBookById(bookId));
-		bookRepository.deleteBookById(bookId);
-		Assert.assertFalse(bookRepository.existsBookById(bookId));
-	}
+        Book book = bookRepository.findAll().get(0);
+        assertNotNull("book present", book);
+        assertEquals("Ivan Petrov", new ArrayList<>(book.getAuthors()).get(0).getName());
+        assertEquals("Fantastic", new ArrayList<>(book.getGenres()).get(0).getName());
+
+    }
+
+    @Test
+    @Transactional
+    public void findAllBooksQueryMethod() {
+
+        Book book = bookRepository.findAllQueryMethod().get(0);
+        assertNotNull("book present", book);
+        assertEquals("Ivan Petrov", new ArrayList<>(book.getAuthors()).get(0).getName());
+        assertEquals("Fantastic", new ArrayList<>(book.getGenres()).get(0).getName());
+
+    }
+
+    @Test
+    @Transactional
+    public void findAllBooksCustomMethod() {
+        Book book = bookRepository.findAllCustomMethod().get(0);
+        assertNotNull("book present", book);
+        assertEquals("Ivan Petrov", new ArrayList<>(book.getAuthors()).get(0).getName());
+        assertEquals("Fantastic", new ArrayList<>(book.getGenres()).get(0).getName());
+    }
+
+
+    @Test
+    @Transactional
+    public void existBookTest() {
+        assertTrue(bookRepository.existsBookById(bookId));
+    }
+
+    @Test
+    @Transactional
+    public void removeBookTest() {
+        assertTrue(bookRepository.existsBookById(bookId));
+        bookRepository.deleteBookById(bookId);
+        assertFalse(bookRepository.existsBookById(bookId));
+    }
 
 }

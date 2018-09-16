@@ -13,6 +13,10 @@ import java.util.Set;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@NamedEntityGraph(name = "loadBookWithAuthorAndGenre",
+                  attributeNodes = {
+                                    @NamedAttributeNode(value = "authors") ,
+                                    @NamedAttributeNode(value = "genres")})
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
